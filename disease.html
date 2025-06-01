@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Disease Prediction System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .symptom-selector {
+            margin-bottom: 30px;
+        }
+        .symptom-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .symptom-checkbox {
+            display: flex;
+            align-items: center;
+            padding: 8px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            transition: background-color 0.2s;
+        }
+        .symptom-checkbox:hover {
+            background-color: #e9ecef;
+        }
+        input[type="checkbox"] {
+            margin-right: 8px;
+        }
+        label {
+            flex-grow: 1;
+            cursor: pointer;
+        }
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: background-color 0.2s;
+        }
+        #detect-btn {
+            background-color: #4CAF50;
+            color: white;
+        }
+        #detect-btn:hover {
+            background-color: #45a049;
+        }
+        #reset-btn {
+            background-color: #f8f9fa;
+            color: #495057;
+        }
+        #reset-btn:hover {
+            background-color: #e9ecef;
+        }
+        .result-container {
+            margin-top: 30px;
+            padding: 20px;
+            border-radius: 5px;
+            display: none;
+        }
+        .result-container.visible {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .disease-result {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .disease-info {
+            line-height: 1.6;
+        }
+        .disease-info p {
+            margin-bottom: 15px;
+        }
+        .alert {
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            color: #721c24;
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Disease Prediction System</h1>
+        
+        <div class="symptom-selector">
+            <h2>Select Your Symptoms</h2>
+            <div class="symptom-group">
+                <div class="symptom-checkbox">
+                    <input type="checkbox" id="fever" name="symptoms" value="fever">
+                    <label for="fever">Fever</label>
+                </div>
+                <div class="symptom-checkbox">
+                    <input type="checkbox" id="cough" name="symptoms" value="cough">
+                    <label for="cough">Cough</label>
+                </div>
+                <div class="symptom-checkbox">
+                    <input type="checkbox" id="fatigue" name="symptoms" value="fatigue">
+                    <label for="fatigue">Fatigue</label>
+                </div>
+                <div class="symptom-checkbox">
+                    <input type="checkbox" id="difficulty-breathing" name="symptoms" value="difficulty-breathing">
+                    <label for="difficulty-breathing">Difficulty Breathing</label>
+                </div>
+                <div class="symptom-checkbox">
+                    <input type="checkbox" id="headache" name="symptoms" value="headache">
+                    <label for="headache">Headache</label>
+                </div>
+                <div class="symptom-checkbox">
+                    <input type="checkbox" id="sore-throat" name="symptoms" value="sore-throat">
+                    <label for="sore-throat">Sore Throat</label>
+                </div>
+                <div class="symptom-checkbox">
+                    <input type="checkbox" id="body-aches" name="symptoms" value="body-aches">
+                    <label for="body-aches">Body Aches</label>
+                </div>
+                <div class="symptom-checkbox">
+                    <input type="checkbox" id="runny-nose" name="symptoms" value="runny-nose">
+                    <label for="runny-nose">Runny Nose</label>
+                </div>
+                <div class="symptom-checkbox">
+                    <input type="checkbox" id="nausea" name="symptoms" value="nausea">
+                    <label for="nausea">Nausea</label>
+                </div>
+                <div class="symptom-checkbox">
+                    <input type="checkbox" id="diarrhea" name="symptoms" value="diarrhea">
+                    <label for="diarrhea">Diarrhea</label>
+                </div>
+                <div class="symptom-checkbox">
+                    <input type="checkbox" id="loss-taste-smell" name="symptoms" value="loss-taste-smell">
+                    <label for="loss-taste-smell">Loss of Taste/Smell</label>
+                </div>
+                <div class="symptom-checkbox">
+                    <input type="checkbox" id="rash" name="symptoms" value="rash">
+                    <label for="rash">Rash</label>
+                </div>
+                <div class="symptom-checkbox">
+                    <input type="checkbox" id="chest-pain" name="symptoms" value="chest-pain">
+                    <label for="chest-pain">Chest Pain</label>
+                </div>
+                <div class="symptom-checkbox">
+                    <input type="checkbox" id="abdominal-pain" name="symptoms" value="abdominal-pain">
+                    <label for="abdominal-pain">Abdominal Pain</label>
+                </div>
+                <div class="symptom-checkbox">
+                    <input type="checkbox" id="joint-pain" name="symptoms" value="joint-pain">
+                    <label for="joint-pain">Joint Pain</label>
+                </div>
+                <div class="symptom-checkbox">
+                    <input type="checkbox" id="dizziness" name="symptoms" value="dizziness">
+                    <label for="dizziness">Dizziness</label>
+                </div>
+            </div>
+            
+            <div class="action-buttons">
+                <button id="detect-btn" onclick="detectDisease()">Detect Disease</button>
+                <button id="reset-btn" onclick="resetForm()">Reset</button>
+            </div>
+        </div>
+        
+        <div id="result" class="result-container">
+            <div id="disease-result" class="disease-result"></div>
+            <div id="disease-info" class="disease-info"></div>
+        </div>
+        
+        <div id="warning" class="alert" style="display: none;">
+            Please select at least 3 symptoms for a more accurate prediction.
+        </div>
+    </div>
+
+    <script>
+        function detectDisease() {
+            // Get selected symptoms
+            const selectedSymptoms = [];
+            document.querySelectorAll('input[name="symptoms"]:checked').forEach(symptom => {
+                selectedSymptoms.push(symptom.value);
+            });
+            
+            // Hide previous results and warnings
+            document.getElementById('result').classList.remove('visible');
+            document.getElementById('warning').style.display = 'none';
+            
+            // Check if enough symptoms are selected
+            if (selectedSymptoms.length < 2) {
+                document.getElementById('warning').style.display = 'block';
+                return;
+            }
+            
+            // Simple rule-based disease prediction
+            let disease = "";
+            let description = "";
+            
+            // COVID-19
+            if ((selectedSymptoms.includes('fever') || selectedSymptoms.includes('cough')) && 
+                (selectedSymptoms.includes('fatigue') || selectedSymptoms.includes('difficulty-breathing') || 
+                 selectedSymptoms.includes('loss-taste-smell'))) {
+                disease = "COVID-19";
+                description = "<p>Based on your symptoms, you may have <strong>COVID-19</strong>.</p>" +
+                    "<p>COVID-19 is a respiratory illness caused by the SARS-CoV-2 virus. Common symptoms include fever, cough, fatigue, difficulty breathing, and loss of taste or smell.</p>" +
+                    "<p><strong>Recommended actions:</strong></p>" +
+                    "<ul>" +
+                    "<li>Get tested for COVID-19</li>" +
+                    "<li>Self-isolate to prevent spreading the virus</li>" +
+                    "<li>Contact your healthcare provider</li>" +
+                    "<li>Rest and stay hydrated</li>" +
+                    "</ul>";
+            }
+            // Common Cold
+            else if (selectedSymptoms.includes('runny-nose') && 
+                     (selectedSymptoms.includes('sore-throat') || selectedSymptoms.includes('cough')) &&
+                     !selectedSymptoms.includes('difficulty-breathing')) {
+                disease = "Common Cold";
+                description = "<p>Based on your symptoms, you may have the <strong>Common Cold</strong>.</p>" +
+                    "<p>The common cold is a viral infection of your nose and throat. It's usually harmless and symptoms include runny nose, sore throat, cough, and mild body aches.</p>" +
+                    "<p><strong>Recommended actions:</strong></p>" +
+                    "<ul>" +
+                    "<li>Rest and drink plenty of fluids</li>" +
+                    "<li>Take over-the-counter cold medications if needed</li>" +
+                    "<li>Use a humidifier to add moisture to the air</li>" +
+                    "<li>Consult a doctor if symptoms worsen or last more than 10 days</li>" +
+                    "</ul>";
+            }
+            // Flu
+            else if (selectedSymptoms.includes('fever') && 
+                     (selectedSymptoms.includes('body-aches') || selectedSymptoms.includes('fatigue')) &&
+                     (selectedSymptoms.includes('headache') || selectedSymptoms.includes('cough'))) {
+                disease = "Influenza (Flu)";
+                description = "<p>Based on your symptoms, you may have <strong>Influenza (Flu)</strong>.</p>" +
+                    "<p>Influenza is a viral infection that attacks your respiratory system. It typically comes on suddenly with symptoms like fever, body aches, fatigue, and headache.</p>" +
+                    "<p><strong>Recommended actions:</strong></p>" +
+                    "<ul>" +
+                    "<li>Rest and stay hydrated</li>" +
+                    "<li>Take over-the-counter pain relievers for fever and aches</li>" +
+                    "<li>Stay home to avoid spreading the virus</li>" +
+                    "<li>Consult a doctor especially if you're in a high-risk group</li>" +
+                    "</ul>";
+            }
+            // Food Poisoning
+            else if ((selectedSymptoms.includes('nausea') || selectedSymptoms.includes('diarrhea')) &&
+                     selectedSymptoms.includes('abdominal-pain')) {
+                disease = "Food Poisoning";
+                description = "<p>Based on your symptoms, you may have <strong>Food Poisoning</strong>.</p>" +
+                    "<p>Food poisoning is caused by consuming contaminated food or drink. Symptoms include nausea, vomiting, diarrhea, and abdominal pain.</p>" +
+                    "<p><strong>Recommended actions:</strong></p>" +
+                    "<ul>" +
+                    "<li>Stay hydrated to replace lost fluids</li>" +
+                    "<li>Rest and avoid solid foods until symptoms improve</li>" +
+                    "<li>Gradually reintroduce bland, easy-to-digest foods</li>" +
+                    "<li>Seek medical attention if symptoms are severe or persist</li>" +
+                    "</ul>";
+            }
+            // Allergic Reaction
+            else if (selectedSymptoms.includes('rash') && 
+                     (selectedSymptoms.includes('difficulty-breathing') || selectedSymptoms.includes('runny-nose'))) {
+                disease = "Allergic Reaction";
+                description = "<p>Based on your symptoms, you may be experiencing an <strong>Allergic Reaction</strong>.</p>" +
+                    "<p>Allergic reactions occur when your immune system reacts to a foreign substance. Symptoms can include rash, itching, difficulty breathing, and runny nose.</p>" +
+                    "<p><strong>Recommended actions:</strong></p>" +
+                    "<ul>" +
+                    "<li>Identify and avoid the allergen if possible</li>" +
+                    "<li>Take antihistamines if recommended by your doctor</li>" +
+                    "<li>Use topical treatments for skin reactions</li>" +
+                    "<li>Seek immediate medical attention if experiencing severe symptoms like difficulty breathing</li>" +
+                    "</ul>";
+            }
+            // Default response if no specific match
+            else {
+                disease = "Unspecified Condition";
+                description = "<p>Based on your combination of symptoms, we cannot provide a specific diagnosis.</p>" +
+                    "<p>Your symptoms could indicate various conditions. It's recommended to consult with a healthcare professional for proper diagnosis and treatment.</p>" +
+                    "<p><strong>Important note:</strong> This tool provides general information only and is not a substitute for professional medical advice.</p>";
+            }
+            
+            // Display the result
+            document.getElementById('disease-result').innerHTML = disease;
+            document.getElementById('disease-info').innerHTML = description;
+            document.getElementById('result').classList.add('visible');
+        }
+        
+        function resetForm() {
+            // Uncheck all checkboxes
+            document.querySelectorAll('input[name="symptoms"]:checked').forEach(symptom => {
+                symptom.checked = false;
+            });
+            
+            // Hide result and warnings
+            document.getElementById('result').classList.remove('visible');
+            document.getElementById('warning').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
